@@ -283,10 +283,16 @@ mod build {
                 .status();
         }
 
-        // Configure cmake to build the Paho C lib
-        let ssl = if cfg!(feature = "ssl") { "on" } else { "off" };
-
         let mut cmk_cfg = cmake::Config::new("paho.mqtt.c/");
+
+        // Configure cmake to build the Paho C lib
+        let ssl = if cfg!(feature = "ssl") {
+            cmk_cfg.register_dep("openssl");
+            "on"
+        } else {
+            "off"
+        };
+
         cmk_cfg
             .define("CMAKE_C_STANDARD", "99")
             .define("PAHO_BUILD_SHARED", "off")
